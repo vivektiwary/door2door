@@ -1,14 +1,27 @@
 {
-  "name": "door2door-back",
+  "name": "door2door",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "env-cmd -f ./config/dev.env node ./bin/www",
+    "test": "env-cmd -f ./config/test.env jest --watch --runInBand"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
-    "morgan": "~1.9.1"
+    "mongoose": "^5.6.12",
+    "morgan": "~1.9.1",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "prettier": "1.18.2",
+    "prettier-eslint": "^9.0.0",
+    "supertest": "^4.0.2",
+    "uniqid": "^5.0.3"
   }
 }

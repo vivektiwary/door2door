@@ -1,20 +1,30 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require("express");
+const path = require("path");
+const logger = require("morgan");
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const vehicleRouter = require("./routes/vehicle");
+const Vehicle = require("./models/vehicle");
 
-var app = express();
+require("./db/mongoose");
 
-app.use(logger('dev'));
+const app = express();
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+
+app.use(logger("dev"));
+app.use(function(req, res, next) {
+    res.io = io;
+    next();
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use("/vehicles", vehicleRouter);
 
-module.exports = app;
+io.on("connection", async socket => {
+    const resObj = await Vehicle.vehiclesWithLocation();
+    socket.emit("connectionSuccessful", { vehicles: resObj });
+});
+
+module.exports = { app: app, server: server };
