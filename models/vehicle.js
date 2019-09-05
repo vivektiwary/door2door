@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Location = require("./location");
+const geolib = require('geolib');
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const VehicleSchema = new mongoose.Schema({
@@ -36,6 +37,13 @@ VehicleSchema.methods.lastLocation = async function() {
 
 VehicleSchema.methods.addLocation = async function(lat, lng, at) {
     const vehicle = await Vehicle.findById(this._id);
+    const berlinCenter = {latitude: 52.53, longitude: 13.403}
+    const distance = geolib.getDistance({latitude: lat, longitude: lng}, berlinCenter, 1)
+    if (distance / 1000 > 3.5) {
+        console.log('outside city bounds', lat, lng);
+        return;
+    }
+    console.log('inside city bounds', lat, lng);
     const location = new Location({ lat, lng, at, vehicleId: vehicle._id });
     await location.save();
 

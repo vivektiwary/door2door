@@ -42,6 +42,27 @@ class VehicleVisualizer {
     new MarkerClusterer(this.map, markers);
   }
 
+  setMarkerPositionWithDirection(vehicle, newMarker = null) {
+    const currentPos = new google.maps.LatLng({
+      lat: vehicle.currentLocation.lat,
+      lng: vehicle.currentLocation.lng
+    });
+    const marker = newMarker || new google.maps.Marker({
+      position: { lat: currentPos.lat(), lng: currentPos.lng() }
+    });
+    vehicle.marker = marker;
+
+    if (!vehicle.lastLocation) {
+      return;
+    }
+
+    const prevPos = new google.maps.LatLng({
+      lat: vehicle.lastLocation.lat,
+      lng: vehicle.lastLocation.lng
+    });
+    setMarkerIcon(marker, prevPos, currentPos);
+  }
+
   populateMarkers() {
     for (const key in this.vehicles) {
       const vehicle = this.getVehicle(key);
@@ -50,20 +71,7 @@ class VehicleVisualizer {
         continue;
       }
 
-      const currentPos = new google.maps.LatLng({
-        lat: vehicle.currentLocation.lat,
-        lng: vehicle.currentLocation.lng
-      });
-      const marker = new google.maps.Marker({
-        position: { lat: currentPos.lat(), lng: currentPos.lng() }
-      });
-      vehicle.marker = marker;
-
-      const prevPos = new google.maps.LatLng({
-        lat: vehicle.lastLocation.lat,
-        lng: vehicle.lastLocation.lng
-      });
-      setMarkerIcon(marker, prevPos, currentPos);
+      this.setMarkerPositionWithDirection(vehicle)
     }
     this.clusterVehicles();
   }
@@ -90,6 +98,7 @@ function initMap() {
       vehicle.addMarker(res.lat, res.lng);
     } else {
       marker.setPosition(new google.maps.LatLng(res.lat, res.lng));
+      vehicleVisualizer.setMarkerPositionWithDirection(vehicle, marker);
     }
   });
 }
