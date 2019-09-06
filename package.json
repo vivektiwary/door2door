@@ -1,5 +1,5 @@
 {
-  "name": "door2door_back",
+  "name": "door2door",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "env-cmd": "^10.0.1",
     "express": "~4.16.1",
     "geolib": "^3.0.4",
     "mongoose": "^5.6.12",
