@@ -54,7 +54,6 @@ VehicleSchema.methods.addLocation = async function(lat, lng, at) {
     console.log("outside city bounds", lat, lng);
     return;
   }
-  console.log("inside city bounds", lat, lng);
   const location = new Location({ lat, lng, at, vehicleId: vehicle._id });
   await location.save();
 
